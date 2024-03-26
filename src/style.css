@@ -1,3 +1,5 @@
+/* Configurações Gerais */
+
 body{
     background-color:#31233e;
     height:868px;
@@ -5,6 +7,24 @@ body{
     margin: 0;
 }
 
+/* Título e Cabeçalho */
+
 header{
-    margin: 0;
+    width: 100%;
+    height: auto;
 }
+
+.responsive-header{
+    width: 100%;
+    height: auto;
+}
+
+/* Card */
+
+/* Imagem */
+
+
+/* Título e Ano */
+
+
+/* Popularidade */
