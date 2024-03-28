@@ -1,43 +1,58 @@
+/* Este é o módulo principal do seu projeto. Ele importa todos os outros módulos e é onde os eventos e manipulações de DOM do projeto serão construídos. 
+Aqui, você pode definir manipuladores de eventos para interações do usuário, chamar funções de renderização dos módulos App.js e Details.js, 
+e integrar a lógica de requisição definida em Requisition.js com a interface do usuário. */
+
 import App from './components/App.js';
-import renderMovies from './components/App.js';
-import loadMovies from './components/App.js';
-
-// import details from './components/details.js';
-
+import fetchMovieDetails from './components/Requisition.js';
+import movieDetails from './components/details.js';
 
 /* Renderizar informações dos filmes na página inicial */
+// Obtém o elemento com o ID 'root' e adiciona os filmes renderizados por App()
 document.getElementById('root').appendChild(App());
+// Função para adicionar evento de clique aos filmes
+const movieClick = (movies) => {
+    // Itera sobre cada filme na lista
+    movies.forEach(movie => {
+        // Seleciona o elemento do filme pelo ID (você precisa ajustar isso conforme a estrutura do seu HTML)
+        const movieElement = document.getElementById(`movie-${movie.id}`);
+        // Adiciona o evento de clique ao elemento do filme
+        movieElement.addEventListener('click', async () => {
+            try {
+                // Obtém os detalhes do filme clicado
+                const details = await fetchMovieDetails(movie.id);
+                // Renderiza os detalhes do filme na interface do usuário
+                movieDetails(details);
+            } catch (error) {
+                console.error(error.message);
+            }
+        });
+    });
+};
+
+// Função principal
+const main = async () => {
+    try {
+        // Obtém a lista de filmes
+        const movies = await App();
+        // Adiciona evento de clique aos filmes
+        movieClick(movies);
+    } catch (error) {
+        console.error(error.message);
+    }
+};
+
+// Chama a função principal ao carregar a página
+window.addEventListener('DOMContentLoaded', main);
+
+
 
 /* Evento de clique para acessar detalhes dos filmes */
-const movieDetail = document.querySelector('.movie-container');
-movieDetail.addEventListener('click', () => {
+// Define um evento de clique para o elemento com a classe 'movie-container'
+// Preciso:
+// 1) adicionar evento de clique aos cards;
+// 2) abre página com o poster maior e detalhes, como: sinopse, elenco e outros.
+// 3) tem um botão de voltar para a lista;
 
-})
-
-/* Paginação - Botões e Eventos */
-let currentPage = 1;
-let movieList = [];
-
-const previewBtn = document.createElement('button');
-previewBtn.textContent = 'Anterior';
-previewBtn.addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderMovies(movieList);
-    }
-});
-document.body.appendChild(previewBtn);
-
-const nextBtn = document.createElement('button');
-nextBtn.textContent = 'Próximo';
-nextBtn.addEventListener('click', () => {
-    const allPages = Math.ceil(movieList.length / allPages);
-    if (currentPage < allPages) {
-        currentPage++;
-        renderMovies(movieList);
-    }
-});
-document.body.appendChild(nextBtn);
 /* pega a id root e dá um appendChild em App. o App é filho da root */
 
 /* Para fazer:

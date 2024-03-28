@@ -23,8 +23,9 @@ header{
 .cabecalho {
     text-align: center;
     color: #92bea5;
+    font-family:cursive;
     font-size: 4.1rem;
-    text-shadow: 0 0 1px #d239e0, 0 0 2px #d1dab9, 0 0 6px #92bea5, 0 0 8px #dd1ddd, 0 0 10px #671045, 0 0 12px #9b50e0, 0 0 14px #d341cc;
+    text-shadow: 0 0 1px #d239e0, 0 0 2px #d1dab9, 0 0 6px #92bea5, 0 0 8px #701ddd, 0 0 10px #671045, 0 0 12px #9b50e0, 0 0 14px #9941d3;
     margin: 0;
 }
 
@@ -98,7 +99,9 @@ ul {
 
 
 /* Footer */
-
+p {
+    color: #d1dab9;
+}
 
 /* Configurações Gerais - Desktop */
 
