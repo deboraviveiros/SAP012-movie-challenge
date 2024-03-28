@@ -50,7 +50,7 @@ const fetchMovieDetails = async (movieId) => {
         };
 
         // Fazemos a requisição para obter os detalhes do filme específico
-        const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?append_to_response=images%3Balternative_titles%3Bcredits&language=pt-BR'`, options);
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?append_to_response=images%3Balternative_titles%3Bcredits&language=pt-BR`, options);
 
         // Verificamos se a requisição foi bem-sucedida
         if (!response.ok) {

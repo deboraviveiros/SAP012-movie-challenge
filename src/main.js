@@ -3,7 +3,7 @@ Aqui, você pode definir manipuladores de eventos para interações do usuário,
 e integrar a lógica de requisição definida em Requisition.js com a interface do usuário. */
 
 import App from './components/App.js';
-import fetchMovieDetails from './components/Requisition.js';
+import { requisition, fetchMovieDetails } from './components/Requisition.js';
 import movieDetails from './components/details.js';
 
 /* Renderizar informações dos filmes na página inicial */
@@ -33,7 +33,7 @@ const movieClick = (movies) => {
 const main = async () => {
     try {
         // Obtém a lista de filmes
-        const movies = await App();
+        const movies = await requisition();
         // Adiciona evento de clique aos filmes
         movieClick(movies);
     } catch (error) {
