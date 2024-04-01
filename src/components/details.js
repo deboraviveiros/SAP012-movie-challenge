@@ -7,12 +7,20 @@ const movieDetails = (details) => {
 
     // Constrói o HTML dos detalhes do filme usando template strings
     const expandDetails = `
-        <h2>${details.title}</h2>
-        <p>${details.overview}</p>
-        <p>Data de Lançamento: ${details.release_date}</p>
-        <p>Gêneros: ${details.genres.map(genre => genre.name).join(', ')}</p>
-        <p>Duração: ${details.runtime} minutos</p>
-        <p>Avaliação: ${details.vote_average}</p>
+    <dl>
+        <dt>Título</dt>
+        <dd><h2 class="title">${details.title}</h2></dd>
+        <dt>Data de Lançamento</dt>
+        <dd><h3 class="release_date">${details.release_date}</h3></dd>
+        <dt>Duração</dt>
+        <dd><p class="runtime">${details.runtime} minutos</p></dd>
+        <dt>Sinopse</dt>
+        <dd><p class="overview">${details.overview}</p></dd>       
+        <dt>Gêneros</dt>
+        <dd><p class="genres">${details.genres.map(genre => genre.name).join(', ')}</p></dd>        
+        <dt>Avaliação</dt>
+        <dd><p class="votes">${details.vote_average}</p></dd>
+    </dl>
     `;
 
     // Define o HTML gerado dentro do container de detalhes
