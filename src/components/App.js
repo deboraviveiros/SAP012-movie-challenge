@@ -1,39 +1,27 @@
 /* Este módulo é responsável pela construção do HTML para visualização dos dados importados na API. 
 Ele conterá funções para renderizar os dados principais na interface do usuário. */
-import requisition from './components/Requisition.js';
 
-const App = async () => {
-  try {
-    // Obtemos a lista de filmes da API utilizando a função requisition
-    const movies = await requisition();
+const App = (movies) => {
+  // Cria a lista UL onde os filmes serão exibidos
+  const ul = document.createElement('ul');
+  ul.classList.add('movie-list');
 
-    // Cria a lista UL onde os filmes serão exibidos
-    let ul = document.createElement('ul');
-    document.body.appendChild(ul);
+  // Mapeia cada filme para criar elementos <li>
+  const movieItems = movies.map((movie) => `
+    <li class="movie-container">
+      <div class="movie-info">
+        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Poster do Filme" class="movie-poster" />
+        <h2 class="title-year">${movie.title} (${movie.release_date})</h2>
+        <p class="popularity">${movie.vote_average}</p>
+      </div>
+    </li>
+  `);
 
-    // Itera sobre cada filme na lista de filmes
-    movies.forEach((movie) => {
-      // Cria um novo elemento de lista para cada filme
-      let li = document.createElement('li');
-      li.classList.add('movie-list');
-      // Cria a estrutura HTML para exibir as informações do filme
-      li.innerHTML = `
-        <div class="movie-container">
-          <div class="movie-info">
-            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Poster do Filme" class="movie-poster" />
-            <h2 class="title-year">${movie.title} (${movie.release_date})</h2>
-            <p class="popularity">${movie.vote_average}</p>
-          </div>
-        </div>
-      `;
-
-      // Adiciona o elemento de lista à lista UL
-      ul.appendChild(li);
-    });
-  } catch (error) {
-    console.error(error.message);
-  }
+  // Adiciona os elementos <li> à lista <ul>
+  ul.innerHTML = movieItems.join('');
+  document.body.appendChild(ul);
 };
+
 export default App;
 // const App = async () => {
 //   let ul = document.createElement('ul');

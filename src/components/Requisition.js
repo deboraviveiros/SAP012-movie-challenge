@@ -1,69 +1,75 @@
 /* Neste módulo, toda a lógica de requisição dos dados à API será construída. Aqui você pode definir funções para lidar com requisições HTTP, como GET, POST, PUT, DELETE, etc. 
 Isso pode incluir a definição de URLs de API, parâmetros de solicitação, tratamento de respostas, etc. */
 
-const requisition = async () => {
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ZGZkNWQ0OWI4YzE0MmM2MjlmOTA2YzhiODliMjZkYiIsInN1YiI6IjY1ZjVhNjIxM2MzYWIwMDE3ZGQwMjc2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.k66Yx9thwDS90B8OzFnrwz8EqkzRrf7od4SG1Ip7Dx4'
-        }
-    };
+// Definindo a chave de acesso à API
+const API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ZGZkNWQ0OWI4YzE0MmM2MjlmOTA2YzhiODliMjZkYiIsInN1YiI6IjY1ZjVhNjIxM2MzYWIwMDE3ZGQwMjc2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.k66Yx9thwDS90B8OzFnrwz8EqkzRrf7od4SG1Ip7Dx4'; // Substitui 'sua_chave_de_acesso'
 
+// Contador para o número total de solicitações feitas à API
+let totalRequests = 0;
+
+// Função para fazer uma requisição HTTP
+const httpRequest = async (url, options) => {
+    // Fazemos a requisição HTTP
+    const response = await fetch(url, options);
+
+    // Verificamos se a requisição foi bem-sucedida
+    if (!response.ok) {
+        throw new Error('Erro na requisição: ' + response.status);
+    }
+
+    // Incrementando o contador de solicitações
+    totalRequests++;
+
+    // Verificando se o limite de solicitações diárias foi excedido
+    if (totalRequests >= 1000) {
+        throw new Error('Limite de solicitações diárias excedido');
+    }
+
+    // Retornando os dados da resposta da requisição no formato JSON
+    return response.json();
+};
+
+// Função para requisitar a lista de filmes
+const requisition = async () => {
+    // Array para armazenar os filmes
     const movies = [];
     let page = 1;
-    let totalPages = 1; // Inicializa totalPages com um valor que será atualizado após a primeira requisição
+    let totalPages = 1;
 
     try {
-        // Enquanto houver páginas para buscar
-        while (page <= totalPages) {
-            // Obtém a resposta da API do TMDB para a página atual
-            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=pt-BR&page=${page}&sort_by=popularity.desc&year=1987`, options);
-            // Extrai o JSON da resposta
-            const data = await response.json();
-            // Atualiza o total de páginas (total_pages) com base nos dados retornados pela primeira requisição
-            if (page === 1) {
-                totalPages = data.total_pages;
-            }
-            // Adiciona os filmes da página atual ao array 'movies'
+        // Enquanto houver páginas de resultados e o limite de solicitações diárias não for excedido
+        while (page <= totalPages && totalRequests < 1000) {
+            // Construindo a URL para requisitar a lista de filmes
+            const url = `https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=pt-BR&page=${page}&sort_by=popularity.desc&year=1987&api_key=${API_KEY}`;
+            // Fazendo a requisição e obtendo os dados da resposta
+            const data = await httpRequest(url);
+            // Atualizando o número total de páginas de resultados
+            totalPages = data.total_pages;
+            // Adicionando os filmes da página atual ao array de filmes
             movies.push(...data.results);
-            // Incrementa o número da página para a próxima requisição
+            // Indo para a próxima página de resultados
             page++;
         }
-        // Retorna todos os filmes obtidos
+        // Retornando a lista completa de filmes
         return movies;
     } catch (error) {
-        // Se ocorrer um erro na busca dos filmes, lança uma exceção
-        throw new Error("Não foi possível revelar os filmes, erh... resultados. Tente novamente mais tarde!");
+        // Lançando um erro se houver algum problema na requisição
+        throw new Error(`Erro ao buscar filmes: ${error.message}`);
     }
 };
 
+// Função para requisitar os detalhes de um filme específico
 const fetchMovieDetails = async (movieId) => {
     try {
-        // Definimos as opções da requisição
-        const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ZGZkNWQ0OWI4YzE0MmM2MjlmOTA2YzhiODliMjZkYiIsInN1YiI6IjY1ZjVhNjIxM2MzYWIwMDE3ZGQwMjc2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.k66Yx9thwDS90B8OzFnrwz8EqkzRrf7od4SG1Ip7Dx4'
-            }
-        };
-
-        // Fazemos a requisição para obter os detalhes do filme específico
-        const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?append_to_response=images%3Balternative_titles%3Bcredits&language=pt-BR`, options);
-
-        // Verificamos se a requisição foi bem-sucedida
-        if (!response.ok) {
-            throw new Error('Erro ao obter detalhes do filme');
-        }
-
-        // Retornamos os detalhes do filme em formato JSON
-        return response.json();
+        // Construindo a URL para requisitar os detalhes do filme
+        const url = `https://api.themoviedb.org/3/movie/${movieId}?append_to_response=images%3Balternative_titles%3Bcredits&language=pt-BR&api_key=${API_KEY}`;
+        // Fazendo a requisição e retornando os dados da resposta no formato JSON
+        return httpRequest(url);
     } catch (error) {
-        // Se ocorrer um erro, lançamos uma exceção
-        throw new Error(`Erro ao obter detalhes do filme com ID ${movieId}: ${error.message} `);
+        // Lançando um erro se houver algum problema na requisição
+        throw new Error(`Erro ao obter detalhes do filme com ID ${movieId}: ${error.message}`);
     }
 };
 
-// Exportamos a função fetchMovieDetails para ser usada em outros arquivos
+// Exportando as funções de requisição para serem usadas em outros arquivos
 export { requisition, fetchMovieDetails };

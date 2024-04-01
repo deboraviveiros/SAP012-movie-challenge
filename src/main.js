@@ -8,8 +8,28 @@ import movieDetails from './components/details.js';
 
 /* Renderizar informações dos filmes na página inicial */
 // Obtém o elemento com o ID 'root' e adiciona os filmes renderizados por App()
-document.getElementById('root').appendChild(App());
+const movieList = App(); // Chama a função App() para obter o elemento HTML da lista de filmes
+document.getElementById('root').appendChild(movieList); // Adiciona o elemento da lista de filmes ao elemento com id 'root'
+
+const detailsElement = movieDetails(); // Chama a função movieDetails() para obter o elemento HTML dos detalhes do filme
+document.getElementById('root').appendChild(detailsElement); // Adiciona o elemento dos detalhes do filme ao elemento com id 'root'
 // Função para adicionar evento de clique aos filmes
+
+// Função principal
+const main = async () => {
+    try {
+        // Obtém a lista de filmes
+        const movies = await requisition();
+        // Adiciona evento de clique aos filmes
+        movieClick(movies);
+    } catch (error) {
+        console.error(error.message);
+    }
+};
+
+// Chama a função principal ao carregar a página
+window.addEventListener('DOMContentLoaded', main);
+
 const movieClick = (movies) => {
     // Itera sobre cada filme na lista
     movies.forEach(movie => {
@@ -29,23 +49,6 @@ const movieClick = (movies) => {
     });
 };
 
-// Função principal
-const main = async () => {
-    try {
-        // Obtém a lista de filmes
-        const movies = await requisition();
-        // Adiciona evento de clique aos filmes
-        movieClick(movies);
-    } catch (error) {
-        console.error(error.message);
-    }
-};
-
-// Chama a função principal ao carregar a página
-window.addEventListener('DOMContentLoaded', main);
-
-
-
 /* Evento de clique para acessar detalhes dos filmes */
 // Define um evento de clique para o elemento com a classe 'movie-container'
 // Preciso:
@@ -56,7 +59,7 @@ window.addEventListener('DOMContentLoaded', main);
 /* pega a id root e dá um appendChild em App. o App é filho da root */
 
 /* Para fazer:
-- Implementar paginação (5 filmes por página);
+- Implementar paginação;
 - Construir detalhes dos filmes;
 - Construir testes unitários;
 - Corrigir estilização;
