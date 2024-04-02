@@ -44,33 +44,40 @@ const clearMovies = () => {
     }
 };
 
-// Função para requisitar a lista de filmes de uma página específica
-const requisition = async (pageNumber = 1) => {
-    console.log('Iniciando requisição da página', pageNumber, 'de filmes...');
-    // Array para armazenar os filmes
-    const movies = [];
+const MIN_PAGE_NUMBER = 1; // Número mínimo da página
+const MAX_PAGE_NUMBER = 10; // Número máximo da página
+
+// Função para requisitar a lista de filmes de todas as páginas dentro de um intervalo específico
+const requisition = async () => {
+    console.log('Iniciando requisição dos filmes...');
+    // Array para armazenar os filmes de todas as páginas
+    const allMovies = [];
 
     try {
         // Limpa a página antes de carregar os novos filmes
         clearMovies();
 
-        // Construindo a URL para requisitar a lista de filmes
-        const url = `https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=pt-BR&page=${pageNumber}&sort_by=popularity.desc&year=1987`;
-        console.log('Requisitando página', pageNumber, 'de filmes:', url);
+        // Faz um loop sobre todas as páginas no intervalo definido
+        for (let pageNumber = MIN_PAGE_NUMBER; pageNumber <= MAX_PAGE_NUMBER; pageNumber++) {
+            // Construindo a URL para requisitar a lista de filmes da página atual
+            const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-BR&page=${pageNumber}&sort_by=popularity.desc&year=1987`;
+            console.log('Requisitando página', pageNumber, 'de filmes:', url);
 
-        // Fazendo a requisição HTTP para obter os filmes da página especificada
-        const pageData = await httpRequest(url, options);
-        movies.push(...pageData.results);
+            // Fazendo a requisição HTTP para obter os filmes da página atual
+            const pageData = await httpRequest(url, options);
+            allMovies.push(...pageData.results);
 
-        console.log('Requisição da página', pageNumber, 'de filmes concluída.');
+            console.log('Requisição da página', pageNumber, 'de filmes concluída.');
+        }
 
-        // Retornando a lista de filmes da página especificada
-        return movies;
+        // Retornando a lista de filmes de todas as páginas no intervalo definido
+        return allMovies;
     } catch (error) {
         // Lançando um erro se houver algum problema na requisição
         throw new Error(`Erro ao buscar filmes: ${error.message}`);
     }
 };
+
 
 // Função para requisitar os detalhes de um filme específico
 const fetchMovieDetails = async (movieId) => {
@@ -91,4 +98,4 @@ const fetchMovieDetails = async (movieId) => {
 };
 
 // Exportando as funções de requisição para serem usadas em outros arquivos
-export { requisition, fetchMovieDetails };
+export { requisition, fetchMovieDetails, MAX_PAGE_NUMBER, MIN_PAGE_NUMBER };
