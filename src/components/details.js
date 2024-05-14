@@ -3,7 +3,7 @@ Aqui, você terá funções para exibir informações mais detalhadas sobre os i
 
 import { fetchMovieDetails } from './Requisition.js';
 
-const movieDetails = async () => {
+const movieDetails = async (movieId) => {
     try {
         // Obtém o elemento onde os detalhes serão exibidos
         let detailsContainer = document.getElementById('movie-details');
@@ -13,8 +13,6 @@ const movieDetails = async () => {
             // Se não existir, criamos dinamicamente o elemento
             detailsContainer = document.createElement('div');
             detailsContainer.id = 'movie-details';
-            // Adiciona o elemento ao DOM
-            document.getElementById('root').appendChild(detailsContainer);
         } else {
             // Se o elemento existir, limpa seu conteúdo
             detailsContainer.innerHTML = '';
@@ -22,17 +20,16 @@ const movieDetails = async () => {
 
         // Obtemos os detalhes do da API utilizando a função fetchMovieDetails
         console.log('Obtendo detalhes do filme...');
-        const fetchDetails = await fetchMovieDetails();
+        const details = await fetchMovieDetails(movieId);
 
-        // Verifica se fetchDetails é um objeto válido
-        if (typeof fetchDetails !== 'object' || Array.isArray(fetchDetails)) {
+        // Verifica se details é um objeto válido
+        if (typeof details !== 'object' || Array.isArray(details)) {
             throw new Error('Os detalhes do filme não foram retornados como um objeto.');
         }
-
         // Constrói o HTML dos detalhes do filme usando template strings
         console.log('Construindo HTML dos detalhes do filme...');
-        const detailsArray = fetchDetails.map((details) => `
-    <dl>
+        const detailsString =
+            `<dl>
         <dt>Título</dt>
         <dd><h2 class="title">${details.title}</h2></dd>
         <dt>Data de Lançamento</dt>
@@ -45,14 +42,12 @@ const movieDetails = async () => {
         <dd><p class="genres">${details.genres.map(genre => genre.name).join(', ')}</p></dd>        
         <dt>Avaliação</dt>
         <dd><p class="votes">${details.vote_average}</p></dd>
-    </dl>
-    `);
-        // Converter o array em uma string HTML
-        const detailsString = detailsArray.join('');
+    </dl>`;
 
         // Define o HTML gerado dentro do container de detalhes
         detailsContainer.innerHTML = detailsString;
         console.log('Detalhes do filme renderizados com sucesso!');
+        return detailsContainer;
     } catch (error) {
         console.error('Erro ao renderizar os filmes:', error);
     }

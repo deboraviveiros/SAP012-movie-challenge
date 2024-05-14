@@ -2,8 +2,8 @@
 Aqui, você pode definir manipuladores de eventos para interações do usuário, chamar funções de renderização dos módulos App.js e Details.js, 
 e integrar a lógica de requisição definida em Requisition.js com a interface do usuário. */
 import App from './components/App.js';
-import movieDetails from './components/details.js';
-import { MIN_PAGE_NUMBER, MAX_PAGE_NUMBER } from './components/Requisition.js';
+import movieDetails from './components/Details.js';
+import { MIN_PAGE_NUMBER, MAX_PAGE_NUMBER, fetchMovieDetails } from './components/Requisition.js';
 
 let currentPage = MIN_PAGE_NUMBER;
 
@@ -96,31 +96,44 @@ const addNavigationButtons = () => {
 
     document.body.appendChild(navigationContainer);
 };
-
+// clicar no filme e ser redirecionamento
 // Função para lidar com o redirecionamento para os detalhes do filme
 const redirectToMovieDetails = async (movieId) => {
     try {
-        await movieDetails.fetchMovieDetails(movieId);
-        document.getElementById('root').appendChild(await movieDetails());
+        document.getElementById('root').appendChild(await movieDetails(movieId));
     } catch (error) {
         console.error('Erro ao carregar detalhes do filme:', error);
     }
 };
 
-// Função para adicionar event listeners aos elementos da lista de filmes
-const addMovieClickListener = () => {
-    const movieElements = document.querySelectorAll('.movie-container');
-    movieElements.forEach((movieElement) => {
-        movieElement.addEventListener('click', () => {
-            const movieId = movieElement.dataset.movieId;
-            redirectToMovieDetails(movieId);
-        });
-    });
+// Manipulador de evento hashchange
+const handleHashChange = () => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#movie-')) {
+        const movieId = hash.slice(7);
+        redirectToMovieDetails(movieId);
+    }
 };
+// ao invés de chamar a redirecttomoviedetails, chamar a moviedetails e passar como parâmetro
+// o movie.id - 
+// Adicionar o manipulador de evento hashchange
+window.addEventListener('hashchange', handleHashChange);
+
+// Chamar o manipulador de evento hashchange para verificar o hash atual ao carregar a página
+handleHashChange();
 
 // Chamada inicial para carregar os filmes na página inicial
 loadMovies();
 
 // Adiciona os botões de navegação e os event listeners
 addNavigationButtons();
-addMovieClickListener();
+
+
+//main - controla o spa - porta de entrada do código e onde vai fazer as tomadas de decisões
+// função para fazer as estrelas automaticas
+// data.forEach((item) => {
+//   const ratingValue = parseFloat(item.extraInfo.assessment);
+//   const fullStars = Math.floor(ratingValue);
+//   const emptyStars = 5 - fullStars;
+  
+//   const ratingStars = '\u2605'.repeat(fullStars)  + '\u2606'.repeat(emptyStars);

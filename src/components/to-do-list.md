@@ -52,3 +52,8 @@ Lista reorganizada:
     - Otimizar o desempenho da aplicação, implementando técnicas como carregamento preguiçoso de recursos e minimizando o número de solicitações HTTP sempre que possível.
 
 Esta lista reorganizada reflete a sequência lógica de desenvolvimento e abrange todas as etapas necessárias para criar uma aplicação SPA funcional e eficiente para exibir uma lista de filmes e seus detalhes.
+
+Ref Elizabete
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css" />
+https://www.angularjswiki.com/fontawesome/6/

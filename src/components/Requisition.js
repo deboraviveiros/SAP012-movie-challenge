@@ -45,33 +45,30 @@ const clearMovies = () => {
 };
 
 const MIN_PAGE_NUMBER = 1; // Número mínimo da página
-const MAX_PAGE_NUMBER = 10; // Número máximo da página
+const MAX_PAGE_NUMBER = 5; // Número máximo da página
+let currentPage = 1;
 
 // Função para requisitar a lista de filmes de todas as páginas dentro de um intervalo específico
 const requisition = async () => {
     console.log('Iniciando requisição dos filmes...');
     // Array para armazenar os filmes de todas as páginas
-    const allMovies = [];
+    const movies = [];
 
     try {
         // Limpa a página antes de carregar os novos filmes
         clearMovies();
+        // Construindo a URL para requisitar a lista de filmes da página atual
+        const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-BR&page=${currentPage}&sort_by=popularity.desc&year=1987`;
+        console.log('Requisitando página', currentPage, 'de filmes:', url);
 
-        // Faz um loop sobre todas as páginas no intervalo definido
-        for (let pageNumber = MIN_PAGE_NUMBER; pageNumber <= MAX_PAGE_NUMBER; pageNumber++) {
-            // Construindo a URL para requisitar a lista de filmes da página atual
-            const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-BR&page=${pageNumber}&sort_by=popularity.desc&year=1987`;
-            console.log('Requisitando página', pageNumber, 'de filmes:', url);
+        // Fazendo a requisição HTTP para obter os filmes da página atual
+        const pageData = await httpRequest(url, options);
+        movies.push(...pageData.results);
 
-            // Fazendo a requisição HTTP para obter os filmes da página atual
-            const pageData = await httpRequest(url, options);
-            allMovies.push(...pageData.results);
-
-            console.log('Requisição da página', pageNumber, 'de filmes concluída.');
-        }
+        console.log('Requisição da página', currentPage, 'de filmes concluída.');
 
         // Retornando a lista de filmes de todas as páginas no intervalo definido
-        return allMovies;
+        return movies;
     } catch (error) {
         // Lançando um erro se houver algum problema na requisição
         throw new Error(`Erro ao buscar filmes: ${error.message}`);
@@ -99,3 +96,5 @@ const fetchMovieDetails = async (movieId) => {
 
 // Exportando as funções de requisição para serem usadas em outros arquivos
 export { requisition, fetchMovieDetails, MAX_PAGE_NUMBER, MIN_PAGE_NUMBER };
+
+//fazer a requisição normal - 

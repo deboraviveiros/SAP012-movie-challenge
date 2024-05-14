@@ -13,13 +13,13 @@ const App = async (pageNumber) => {
 
     // Mapeia cada filme para criar elementos <li>
     const movieItems = movies.map((movie) => `
-      <li class="movie-container">
+      <li class="movie-container"><a href='#movie-${movie.id}'>
         <div class="movie-info">
           <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="Poster do Filme" class="movie-poster" />
           <h2 class="title-year">${movie.title} (${movie.release_date})</h2>
           <p class="popularity">${movie.vote_average}</p>
         </div>
-      </li>
+      </a></li>
     `);
 
     // Adiciona os elementos <li> à lista <ul>
